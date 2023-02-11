@@ -1,0 +1,27 @@
+version: "3.7"
+services:
+  inventory_app:
+    build: .
+    depends_on:
+      - mongodb
+    container_name: api
+    restart: always
+    ports:
+      - 8080:8080
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data_container:/data/db
+  migration:
+    build:
+      context: .
+    command: ['npm', 'run', 'seed']
+    depends_on:
+      - mongodb
+volumes:
+  mongodb_data_container:
